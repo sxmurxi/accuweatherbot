@@ -30,10 +30,12 @@ def main():
     except Exception as e:
         print("Exception (weather):", e)
         pass
+    return data
 def weatherbotcore():
-    main_data = main()
+    main_data = main
+
     TOKEN = "6150401156:AAFggudQIBtiShpS5Ow-PlAhFwx-IxwcWUI"
-    MSG = (main.)
+    MSG = (main_data)
 
     logging.basicConfig(level=logging.INFO)
 
