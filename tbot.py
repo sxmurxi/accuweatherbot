@@ -4,6 +4,7 @@ import asyncio
 import requests
 from aiogram import Bot, Dispatcher, executor, types
 def main():
+    global data, temp
     s_city = "Kyiv"
     city_id = 703448
     appid = "буквенно-цифровой APPID"
@@ -23,16 +24,15 @@ def main():
         res = requests.get("http://api.openweathermap.org/data/2.5/weather",
                      params={'id': 703448, 'units': 'metric', 'lang': 'ru', 'APPID': '27801b2265cfd032a3da38480118656e'})
         data = res.json()
-        print("conditions:", data['weather'][0]['description'])
-        print("temp:", data['main']['temp'])
-        print("temp_min:", data['main']['temp_min'])
-        print("temp_max:", data['main']['temp_max'])
+        temp = data['main']['temp']
+        weather_info = "Погода в Киеве: {} °C, {}.".format(temp, data['weather'][0]['description'])
+        return weather_info
     except Exception as e:
         print("Exception (weather):", e)
         pass
-    return data
+    return temp
 def weatherbotcore():
-    main_data = main
+    main_data = main()
 
     TOKEN = "6150401156:AAFggudQIBtiShpS5Ow-PlAhFwx-IxwcWUI"
     MSG = (main_data)
@@ -52,11 +52,12 @@ def weatherbotcore():
         await message.reply(f"Привет, {user_full_name}!")
 
         for i in range(7):
-            await asyncio.sleep(1)
-            await bot.send_message(user_id, MSG.format(user_name))
+            await asyncio.sleep(60 * 60 * 12)
+            await bot.send_message(user_id, MSG)
 
 
     if __name__ == "__main__":
         executor.start_polling(dp)
 
+main()
 weatherbotcore()

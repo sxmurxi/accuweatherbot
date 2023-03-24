@@ -23,6 +23,7 @@ def main():
         print("temp:", data['main']['temp'])
         print("temp_min:", data['main']['temp_min'])
         print("temp_max:", data['main']['temp_max'])
+        print(data['main']['temp'])
     except Exception as e:
         print("Exception (weather):", e)
         pass
