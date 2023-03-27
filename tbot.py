@@ -3,11 +3,12 @@ import logging
 import asyncio
 import requests
 from aiogram import Bot, Dispatcher, executor, types
+
 def main():
     global data, temp
     s_city = "Kyiv"
     city_id = 703448
-    appid = "буквенно-цифровой APPID"
+    appid = "27801b2265cfd032a3da38480118656e"
     try:
         res = requests.get("http://api.openweathermap.org/data/2.5/find",
                      params={'q': s_city, 'type': 'like', 'units': 'metric', 'APPID': '27801b2265cfd032a3da38480118656e'})
@@ -26,22 +27,23 @@ def main():
         data = res.json()
         temp = data['main']['temp']
         weather_info = "Погода в Киеве: {} °C, {}.".format(temp, data['weather'][0]['description'])
-        return weather_info
+        return {'temp': temp, 'description': data['weather'][0]['description']}
     except Exception as e:
         print("Exception (weather):", e)
         pass
-    return temp
+    return {'temp': None, 'description': None}
+
+
 def weatherbotcore():
-    main_data = main()
+    weather_data = main()
 
     TOKEN = "6150401156:AAFggudQIBtiShpS5Ow-PlAhFwx-IxwcWUI"
-    MSG = (main_data)
+    MSG = f"Погода в Киеве: {weather_data['temp']} °C, {weather_data['description']}."
 
     logging.basicConfig(level=logging.INFO)
 
     bot = Bot(token=TOKEN)
     dp = Dispatcher(bot=bot)
-
 
     @dp.message_handler(commands=["start"])
     async def start_handler(message: types.Message):
@@ -52,12 +54,10 @@ def weatherbotcore():
         await message.reply(f"Привет, {user_full_name}!")
 
         for i in range(7):
-            await asyncio.sleep(60 * 60 * 12)
+            await asyncio.sleep(60 * 60 * 4)
             await bot.send_message(user_id, MSG)
-
 
     if __name__ == "__main__":
         executor.start_polling(dp)
 
-main()
 weatherbotcore()
