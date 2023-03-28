@@ -59,7 +59,7 @@ def weatherbotcore():
     bot = Bot(token=TOKEN)
     dp = Dispatcher(bot=bot)
 
-    @dp.message_handler(commands=["start", "outfit"])
+    @dp.message_handler(commands=["start", "outfit", "cycle"])
     async def handle_commands(message: types.Message):
         user_id = message.from_user.id
         user_full_name = message.from_user.full_name
@@ -91,6 +91,32 @@ def weatherbotcore():
             else:
                 outfit = "На улице очень жарко! Наденьте что-то легкое и прохладное."
             await message.reply(f"Сейчас в Киеве {temp} °C, {description}. {outfit}")
+        elif message.text == "/cycle":
+            await asyncio.sleep(1)
+            await bot.send_message(user_id, MSG)
+            weather_data = main()
+
+            if weather_data['temp'] is None:
+                await message.reply("Не могу получить информацию о погоде. Попробуйте позже. 🌧")
+                return
+
+            temp = weather_data['temp']
+            description = weather_data['description']
+            if temp <= 0:
+                outfit = "На улице очень холодно! Наденьте теплую куртку, шапку, шарф и перчатки."
+            elif temp <= 5:
+                outfit = "На улице холодно! Наденьте теплую куртку, шапку и перчатки."
+            elif temp <= 10:
+                outfit = "На улице прохладно! Наденьте легкую куртку и шапку."
+            elif temp <= 15:
+                outfit = "На улице прохладно! Наденьте свитер и легкую куртку."
+            elif temp <= 20:
+                outfit = "На улице тепло! Наденьте легкую куртку."
+            else:
+                outfit = "На улице очень жарко! Наденьте что-то легкое и прохладное."
+            for i in range(7):
+                await asyncio.sleep(60 * 60 * 4)
+                await bot.send_message(f"Сейчас в Киеве {temp} °C, {description}. {outfit}")
 
     if __name__ == "__main__":
         executor.start_polling(dp)
